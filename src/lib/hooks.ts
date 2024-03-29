@@ -143,6 +143,23 @@ export function useLocalStorage<T>(
   return [value, setValue] as const;
 }
 
+export function useOnClickOutside(
+  refs: React.RefObject<HTMLElement>[],
+  handler: () => void
+) {
+  useEffect(() => {
+    const handleCLick = (e: MouseEvent) => {
+      if (refs.every((ref) => !ref.current?.contains(e.target as Node))) {
+        handler();
+      }
+    };
+
+    document.addEventListener('click', handleCLick);
+
+    return () => document.removeEventListener('click', handleCLick);
+  }, [refs, handler]);
+}
+
 // -----------------------------------------------
 export function useBookmarksContext() {
   const context = useContext(BookmarksContext);
